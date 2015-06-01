@@ -1,15 +1,22 @@
-// Usage:
-// cat phoneme_list.txt | node phonemize-syllablize.js filename.txt [--make-module]
+//Usage:
+// node phonemize-syllablize.js {input_list.txt} {output_filename.txt} [--make-module]
+
 var split = require('split');
 var cmuTextToPhonemeStream = require('./cmu-text-to-phoneme');
 var syllablizeThrough = require('./syllablize-through');
 var stringifyThrough = require('./stringify-through');
+
+var options = { 
+	flags: 'r',
+	encoding: 'utf8',	
+}
+
 var fs = require('fs');
 
 var start = process.hrtime();
 
 var settings = {
-  outFilename: process.argv[2]
+  outFilename: process.argv[3]
 };  
 
 var writableFileStream = fs.createWriteStream(settings.outFilename, {
@@ -23,18 +30,14 @@ writableFileStream.on('close', function writableStreamClosed() {
 		elapsedTime[0], elapsedTime[1]);
 });
 
-if ('--make-module' === process.argv[3]) {
+if ('--make-module' === process.argv[4]) {
 	writableFileStream.write('module.exports = ');
 }
 
-process.stdin.setEncoding('utf8');
 
-
-process.stdin
+fs.createReadStream(process.argv[2], options)
 	.pipe(split())
 	.pipe(cmuTextToPhonemeStream)
 	.pipe(syllablizeThrough.createStream())
 	.pipe(stringifyThrough.createStream({followupString: '\n'}))
 	.pipe(writableFileStream);
-
-
