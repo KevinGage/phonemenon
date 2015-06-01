@@ -8,7 +8,7 @@ var stringifyThrough = require('./stringify-through');
 
 var options = { 
 	flags: 'r',
-	encoding: 'utf8',	
+	encoding: 'utf8'	
 }
 
 var fs = require('fs');
@@ -21,7 +21,7 @@ var settings = {
 
 var writableFileStream = fs.createWriteStream(settings.outFilename, {
   flags: 'w',
-  encoding: 'utf8',
+  encoding: 'utf8'
 });
 
 writableFileStream.on('close', function writableStreamClosed() {
