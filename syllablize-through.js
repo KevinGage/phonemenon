@@ -15,7 +15,7 @@ function createStream() {
   return syllablizeThroughStream;  
 }
 
-// Phoneme groups will look like this:
+// Program Input:
 // {
 //   "word": "ABALONE",
 //   "phonemes": [
@@ -28,6 +28,46 @@ function createStream() {
 //     {"phoneme":"IY","stress":0}
 //   ]
 // }
+
+//Program Output:
+
+// "syllables":[["AE"],["B","AH"],["L","OW"],["N","IY"]]}
+
+//goal: we take in a given phoneme and check whether it should belong to the current syllable or a new syllable
+
+function shouldBreakToNextSyllable(currentPhoneme, nextPhoneme, 
+  currentSyllableHasAVowel) {
+
+  // if current syllable does not have a vowel, then don't break to the next syllable (this implies that every syllable should have a vowel)
+  if (!currentSyllableHasAVowel) {
+    return false;
+  }
+  //"AE" does not return false
+  //"B" returns false
+
+
+  // if current syllable has a vowel, then check the stress of the current phoneme
+  // if the stress is not negative, then break to the next syllable
+  else if (currentPhoneme.stress > -1) {
+    return true;
+  }
+  //"AE" returns true
+  //"B" does not return true
+
+ 
+  //if there is a next phoneme after the current one, and the next phoneme stress is not negative, then break to the next syllable
+  else if (nextPhoneme && nextPhoneme.stress > -1) {
+    return true;
+  }
+  //"B" returns true because "AH" has a non-negative stress
+ 
+  
+  //if neither of the two above cases are true, then stay on the same syllable
+ else {
+    return false;
+  }
+}
+  //no example of this case in this particular word
 
 function syllablizePhonemeGroup(phonemeGroup) {
   var syllables = [];
@@ -67,21 +107,5 @@ function syllablizePhonemeGroup(phonemeGroup) {
   return phonemeGroup;
 }
 
-function shouldBreakToNextSyllable(currentPhoneme, nextPhoneme, 
-  currentSyllableHasAVowel) {
-
-  if (!currentSyllableHasAVowel) {
-    return false;
-  }
-  else if (currentPhoneme.stress > -1) {
-    return true;
-  }
-  else if (nextPhoneme && nextPhoneme.stress > -1) {
-    return true;
-  }
-  else {
-    return false;
-  }
-}
 
 module.exports = {createStream: createStream};
